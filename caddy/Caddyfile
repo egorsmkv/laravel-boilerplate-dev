@@ -1,12 +1,8 @@
-{
-	debug
-}
-
 localhost:80 {
 	log {
 		output stdout
 		format console
-		level DEBUG
+		level INFO
 	}
 
 	root * /app/frontend/public

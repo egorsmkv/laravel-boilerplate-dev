@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  worker-1:
+    image: laravel_app_prod:1.0
+    restart: always
+    env_file:
+      - prod.env
+    command:
+      - php
+      - artisan
+      - queue:work
+    depends_on:
+      - pgsql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 256M

@@ -1,8 +1,6 @@
 FROM bitnami/php-fpm:8.3
 
-RUN apt update && apt install -y autoconf php-dev pkg-php-tools unzip git zlib1g-dev wget build-essential && \
-    curl -fsSL https://bun.sh/install | bash && \
-    mv /root/.bun/bin/bun /usr/local/bin && \
+RUN apt update && apt install -y autoconf php-dev pkg-php-tools unzip zlib1g-dev wget build-essential && \
     pecl install excimer
 
 RUN wget https://pecl.php.net/get/redis-6.0.2.tgz && \
@@ -13,11 +11,14 @@ RUN wget https://pecl.php.net/get/redis-6.0.2.tgz && \
     make &&  \
     make install
 
-RUN git clone https://github.com/NoiseByNorthwest/php-spx.git && \
-    cd php-spx &&  \
-    phpize &&  \
-    ./configure &&  \
-    make &&  \
-    make install
+ADD ./apps /app
+
+RUN cp prod-frontend.env apps/frontend/.env
+RUN cp ./phpfpm/env.conf /opt/bitnami/php/etc/php-fpm.d/env.conf
+RUN cp ./phpfpm/custom.ini /opt/bitnami/php/etc/conf.d/custom.ini
 
 WORKDIR /app/frontend
+
+RUN composer install --optimize-autoloader --no-dev
+
+RUN php artisan key:generate

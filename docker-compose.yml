@@ -2,16 +2,10 @@ version: '3'
 
 services:
   apps:
-    image: laravel_app:1.0
+    image: laravel_app_prod:1.0
+    restart: always
     env_file:
-      - dev.env
-    volumes:
-      - ./phpfpm/env.conf:/opt/bitnami/php/etc/php-fpm.d/env.conf
-      - ./phpfpm/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
-      - ./phpfpm/logs:/var/log/php-fpm/
-      - ./apps:/app
-    ports:
-      - "5173:5173"
+      - prod.env
     depends_on:
       - pgsql
       - redis
@@ -22,8 +16,10 @@ services:
 
   caddy:
     image: caddy:2.7
+    restart: always
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./apps:/app
@@ -37,8 +33,9 @@ services:
 
   pgsql:
     image: postgres:16.1-alpine
+    restart: always
     env_file:
-      - dev.env
+      - prod.env
     volumes:
       - pgsql_data:/var/lib/postgresql/data
     deploy:
@@ -46,35 +43,13 @@ services:
         limits:
           memory: 512M
 
-  adminer:
-    image: adminer:4.8.1-standalone
-    env_file:
-      - dev.env
-    ports:
-      - "8001:8080"
-    depends_on:
-      - pgsql
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-
-  inbucket:
-    image: inbucket/inbucket:main
-    ports:
-      - "9001:9000"
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-
   redis:
     image: redis:7.2-alpine
-    command: [
-      "redis-server",
-      "--appendonly",
-      "yes"
-    ]
+    restart: always
+    command:
+      - redis-server
+      - --appendonly
+      - yes
     volumes:
       - redis_data:/data
     deploy:
