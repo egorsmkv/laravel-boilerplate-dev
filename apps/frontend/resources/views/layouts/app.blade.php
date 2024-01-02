@@ -76,6 +76,8 @@
             <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
                 @if (app()->environment('local'))
                     <a href="/telescope" class="hover:underline">Telescope</a>
+                @else
+                    We are in production.
                 @endif
             </span>
             </div>

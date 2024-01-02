@@ -14,16 +14,34 @@ services:
         limits:
           memory: 512M
 
+  queue:
+    image: laravel_app_prod:1.0
+    restart: always
+    env_file:
+      - prod.env
+    command:
+      - php
+      - artisan
+      - queue:work
+    depends_on:
+      - pgsql
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
   caddy:
-    image: caddy:2.7
+    image: laravel_app_prod:1.0
     restart: always
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./apps:/app
-      - caddy_data:/data
+    command:
+      - /app/caddy
+      - run
+      - --config
+      - /app/Caddyfile
     depends_on:
       - apps
     deploy:
@@ -58,6 +76,5 @@ services:
           memory: 64M
 
 volumes:
-  caddy_data:
   pgsql_data:
   redis_data:

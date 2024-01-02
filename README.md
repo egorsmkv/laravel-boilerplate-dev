@@ -15,9 +15,6 @@ docker build --tag laravel_app_prod:1.0 .
 # Up containers
 docker compose up -d
 
-# Up queue workers
-docker compose -f docker-compose.workers.yml up -d
-
 # Set apps container name
 APPS_CONTAINER=laravel-boilerplate-prod-apps-1 # bash
 set APPS_CONTAINER laravel-boilerplate-prod-apps-1 # fish
