@@ -1,4 +1,4 @@
-# Laravel Boilerplate for Development
+# Laravel Boilerplate for Production
 
 ### Requirements
 
